@@ -1,5 +1,8 @@
 package model;
 
+import java.util.Comparator;
+import java.util.Objects;
+
 /**
  * Immutable Employee object.
  */
@@ -18,6 +21,30 @@ public final class Employee {
     public String toString() {
         return "Employee{name='" + name + "', experienceYears=" + experienceYears + ", salary=" + salary + "}";
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Employee e)) return false;
+        return experienceYears == e.experienceYears
+                && Double.compare(e.salary, salary) == 0
+                && Objects.equals(name, e.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, experienceYears, salary);
+    }
+
+    // <editor-fold desc="--- Comparators ---">
+    public static final Comparator<Employee> BY_NAME_ASC = Comparator.comparing(Employee::getName, String.CASE_INSENSITIVE_ORDER);
+    public static final Comparator<Employee> BY_NAME_DESC = BY_NAME_ASC.reversed();
+    public static final Comparator<Employee> BY_SALARY_ASC = Comparator.comparingDouble(Employee::getSalary);
+    public static final Comparator<Employee> BY_SALARY_DESC = BY_SALARY_ASC.reversed();
+    public static final Comparator<Employee> BY_EXPERIENCE_ASC = Comparator.comparingInt(Employee::getExperienceYears);
+    public static final Comparator<Employee> BY_EXPERIENCE_DESC = BY_EXPERIENCE_ASC.reversed();
+    public static final Comparator<Employee> GENERAL = BY_EXPERIENCE_DESC.thenComparing(BY_SALARY_DESC).thenComparing(BY_NAME_ASC);
+    // </editor-fold>
 
     // <editor-fold desc="--- Getters ---">
     public String getName() {return name;}
