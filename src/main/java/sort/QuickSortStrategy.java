@@ -1,40 +1,40 @@
 package sort;
 
-import java.util.List;
+import collection.CustomList;
 import java.util.Comparator;
 
 public class QuickSortStrategy<T> implements SortStrategy<T> {
 
     @Override
-    public void sort(List<T> list, Comparator<T> comparator) {
-        quickSort(list, 0, list.size() - 1, comparator);
+    public void sort(CustomList<T> data, Comparator<T> comparator) {
+        quickSort(data, 0, data.size() - 1, comparator);
     }
 
-    private void quickSort(List<T> list, int low, int high, Comparator<T> comp) {
+    private void quickSort(CustomList<T> data, int low, int high, Comparator<T> comp) {
         if (low < high) {
-            int pi = partition(list, low, high, comp);
-            quickSort(list, low, pi - 1, comp);
-            quickSort(list, pi + 1, high, comp);
+            int pi = partition(data, low, high, comp);
+            quickSort(data, low, pi - 1, comp);
+            quickSort(data, pi + 1, high, comp);
         }
     }
 
-    private int partition(List<T> list, int low, int high, Comparator<T> comp) {
-        T pivot = list.get(high);
+    private int partition(CustomList<T> data, int low, int high, Comparator<T> comp) {
+        T pivot = data.get(high);
         int i = low - 1;
 
         for (int j = low; j < high; j++) {
-            if (comp.compare(list.get(j), pivot) <= 0) {
+            if (comp.compare(data.get(j), pivot) <= 0) {
                 i++;
-                swap(list, i, j);
+                swap(data, i, j);
             }
         }
-        swap(list, i + 1, high);
+        swap(data, i + 1, high);
         return i + 1;
     }
 
-    private void swap(List<T> list, int i, int j) {
-        T tmp = list.get(i);
-        list.set(i, list.get(j));
-        list.set(j, tmp);
+    private void swap(CustomList<T> data, int i, int j) {
+        T tmp = data.get(i);
+        data.set(i, data.get(j));
+        data.set(j, tmp);
     }
 }

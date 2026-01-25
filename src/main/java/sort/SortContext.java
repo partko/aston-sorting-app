@@ -1,6 +1,6 @@
 package sort;
 
-import java.util.List;
+import collection.CustomList;
 import java.util.Comparator;
 
 public class SortContext<T> {
@@ -11,10 +11,10 @@ public class SortContext<T> {
         this.strategy = strategy;
     }
 
-    public void execute(List<T> list, Comparator<T> comparator) {
+    public void execute(CustomList<T> data, Comparator<T> comparator) {
         if (strategy == null) {
             throw new IllegalStateException("SortStrategy is not set");
         }
-        strategy.sort(list, comparator);
+        strategy.sort(data, comparator);
     }
 }

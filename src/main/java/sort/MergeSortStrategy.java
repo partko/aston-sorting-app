@@ -1,27 +1,28 @@
 package sort;
 
-import java.util.List;
+import collection.CustomList;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 public class MergeSortStrategy<T> implements SortStrategy<T> {
 
     @Override
-    public void sort(List<T> list, Comparator<T> comparator) {
-        if (list.size() < 2) return;
-        mergeSort(list, 0, list.size() - 1, comparator);
+    public void sort(CustomList<T> data, Comparator<T> comparator) {
+        if (data.size() < 2) return;
+        mergeSort(data, 0, data.size() - 1, comparator);
     }
 
-    private void mergeSort(List<T> list, int left, int right, Comparator<T> comp) {
+    private void mergeSort(CustomList<T> data, int left, int right, Comparator<T> comp) {
         if (left >= right) return;
         int mid = (left + right) / 2;
-        mergeSort(list, left, mid, comp);
-        mergeSort(list, mid + 1, right, comp);
-        merge(list, left, mid, right, comp);
+        mergeSort(data, left, mid, comp);
+        mergeSort(data, mid + 1, right, comp);
+        merge(data, left, mid, right, comp);
     }
 
-    private void merge(List<T> list, int left, int mid, int right, Comparator<T> comp) {
-        List<T> temp = new ArrayList<>(list.subList(left, right + 1));
+    private void merge(CustomList<T> data, int left, int mid, int right, Comparator<T> comp) {
+        List<T> temp = new ArrayList<>(data.subList(left, right + 1));
 
         int i = 0;
         int j = mid - left + 1;
@@ -29,14 +30,14 @@ public class MergeSortStrategy<T> implements SortStrategy<T> {
 
         while (i <= mid - left && j <= right - left) {
             if (comp.compare(temp.get(i), temp.get(j)) <= 0) {
-                list.set(k++, temp.get(i++));
+                data.set(k++, temp.get(i++));
             } else {
-                list.set(k++, temp.get(j++));
+                data.set(k++, temp.get(j++));
             }
         }
 
         while (i <= mid - left) {
-            list.set(k++, temp.get(i++));
+            data.set(k++, temp.get(i++));
         }
     }
 }

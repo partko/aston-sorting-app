@@ -1,39 +1,39 @@
 package sort;
 
+import collection.CustomList;
+import model.Employee;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 
+public class EvenExperienceSortStrategy implements SortStrategy<Employee> {
 
-public class EvenExperienceSortStrategy<T> implements SortStrategy<T> {
+    private final SortStrategy<Employee> baseSort;
 
-    private final ExperienceExtractor<T> extractor;
-    private final SortStrategy<T> baseSort;
-
-    public EvenExperienceSortStrategy(ExperienceExtractor<T> extractor,
-                                      SortStrategy<T> baseSort) {
-        this.extractor = Objects.requireNonNull(extractor);
-        this.baseSort = Objects.requireNonNull(baseSort);
+    public EvenExperienceSortStrategy(SortStrategy<Employee> baseSort) {
+        this.baseSort = baseSort;
     }
 
     @Override
-    public void sort(List<T> list, Comparator<T> comparator) {
-
+    public void sort(CustomList<Employee> data, Comparator<Employee> comparator) {
         List<Integer> evenIndexes = new ArrayList<>();
-        List<T> evenElements = new ArrayList<>();
+        CustomList<Employee> evenEmployees = new CustomList<>();
 
-        for (int i = 0; i < list.size(); i++) {
-            if (extractor.getExperience(list.get(i)) % 2 == 0) {
+        // Collect employees with even experience
+        for (int i = 0; i < data.size(); i++) {
+            if (data.get(i).getExperienceYears() % 2 == 0) {
                 evenIndexes.add(i);
-                evenElements.add(list.get(i));
+                evenEmployees.add(data.get(i));
             }
         }
 
-        baseSort.sort(evenElements, comparator);
+        // Sort only even experience employees
+        baseSort.sort(evenEmployees, comparator);
 
+        // Put sorted employees back to their positions
         for (int i = 0; i < evenIndexes.size(); i++) {
-            list.set(evenIndexes.get(i), evenElements.get(i));
+            data.set(evenIndexes.get(i), evenEmployees.get(i));
         }
     }
 }
