@@ -7,6 +7,10 @@ import java.util.stream.IntStream;
 
 public class EmployeeGenerator {
 
+    private static final int MAX_EXPERIENCE  = 21;
+    private static final int MIN_SALARY = 30000;
+    private static final int SALARY_STEP = 5000;
+    private static final int MAX_SALARY_STEPS = 25;
     private static final String [] NAMES = {
             "Иван", "Анна", "Петр", "Мария", "Сергей", "Ольга", "Алексей", "Елена", "Дмитрий", "Наталья", "Андрей",
             "Екатерина", "Михаил", "Татьяна", "Николай", "Юлия", "Владимир", "Анастасия", "Александр", "Ирина"
@@ -18,10 +22,11 @@ public class EmployeeGenerator {
         CustomList<Employee> employees = new CustomList<>(count);
 
         IntStream.range(0, count)
-                .mapToObj(i -> Employee.of(
-                        (NAMES[RANDOM.nextInt(NAMES.length)]),
-                        RANDOM.nextInt(21),
-                        (30000 + RANDOM.nextInt(25) * 5000))
+                .mapToObj(i -> Employee.builder()
+                        .name(NAMES[RANDOM.nextInt(NAMES.length)])
+                        .experienceYears(RANDOM.nextInt(MAX_EXPERIENCE))
+                        .salary(MIN_SALARY + RANDOM.nextInt(MAX_SALARY_STEPS) * SALARY_STEP)
+                        .build()
                 )
                 .forEach(employees::add);
 

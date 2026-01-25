@@ -4,6 +4,7 @@ package collection;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 public class CustomList<T> implements Iterable<T> {
 
@@ -18,7 +19,7 @@ public class CustomList<T> implements Iterable<T> {
 
     public CustomList(int initialCapacity) {
         if (initialCapacity < 0) {
-            throw new IllegalArgumentException("Емкость не может быть отрицательной");
+            throw new IllegalArgumentException("Initial capacity cannot be negative: " + initialCapacity);
         }
         this.data = new Object[initialCapacity];
         this.size = 0;
@@ -82,7 +83,7 @@ public class CustomList<T> implements Iterable<T> {
 
     public boolean remove(T element) {
         for (int i = 0; i < size; i++) {
-            if (data[i].equals(element)) {
+            if (Objects.equals(data[i], element)) {
                  remove(i);
                  return true;
             }
@@ -92,7 +93,7 @@ public class CustomList<T> implements Iterable<T> {
 
     public boolean contains(T element) {
         for (int i = 0; i < size ; i++) {
-            if (data[i].equals(element)) {
+            if (Objects.equals(data[i], element)) {
                 return true;
             }
         }
@@ -114,9 +115,16 @@ public class CustomList<T> implements Iterable<T> {
         data[j] = temp;
     }
 
+    public void clear() {
+        for(int i = 0; i < size; i++) {
+            data[i] = null;
+        }
+        size = 0;
+    }
+
     private void checkIndex(int index) {
         if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException();
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
         }
     }
 
@@ -135,7 +143,7 @@ public class CustomList<T> implements Iterable<T> {
             @Override
             public T next() {
                 if (!hasNext()) {
-                    throw new NoSuchElementException();
+                    throw new NoSuchElementException("Iterator has no more elements");
                 }
                 return (T) data[cursor++];
             }

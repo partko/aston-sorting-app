@@ -12,7 +12,7 @@ public class EmployeeManualInput {
         this.scanner = scanner;
     }
 
-    public Employee generateEmployee() {
+    public Employee readEmployee() {
 
         while (true) {
             try {
