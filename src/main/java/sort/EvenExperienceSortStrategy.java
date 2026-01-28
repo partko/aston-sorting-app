@@ -3,41 +3,43 @@ package sort;
 import collection.CustomList;
 import model.Employee;
 
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 
 public class EvenExperienceSortStrategy implements SortStrategy<Employee> {
 
     @Override
     public void sort(CustomList<Employee> data, Comparator<Employee> comparator) {
-        if (data == null || data.size() < 2) return;
+        if (data == null || data.size() < 2) {
+            return;
+        }
 
-        List<Integer> evenIndexes = new ArrayList<>();
-        List<Employee> evenEmployees = new ArrayList<>();
+        CustomList<Integer> evenIndexes = new CustomList<>();
+        CustomList<Employee> evenEmployees = new CustomList<>();
 
         // собираем сотрудников с чётным стажем
         for (int i = 0; i < data.size(); i++) {
-            Employee e = data.get(i);
-            if (e.getExperienceYears() % 2 == 0) {
+            Employee employee = data.get(i);
+            if (employee.getExperienceYears() % 2 == 0) {
                 evenIndexes.add(i);
-                evenEmployees.add(e);
+                evenEmployees.add(employee);
             }
         }
 
-        if (evenEmployees.size() < 2) return;
+        if (evenEmployees.size() < 2) {
+            return;
+        }
 
-        // сортируем только чётных
+        // сортировка чётных сотрудников
         quickSort(evenEmployees, 0, evenEmployees.size() - 1, comparator);
 
-        // возвращаем их обратно на исходные позиции
+        // возвращаем отсортированных
         for (int i = 0; i < evenIndexes.size(); i++) {
             data.set(evenIndexes.get(i), evenEmployees.get(i));
         }
     }
 
     private void quickSort(
-            List<Employee> list,
+            CustomList<Employee> list,
             int low,
             int high,
             Comparator<Employee> comparator
@@ -50,7 +52,7 @@ public class EvenExperienceSortStrategy implements SortStrategy<Employee> {
     }
 
     private int partition(
-            List<Employee> list,
+            CustomList<Employee> list,
             int low,
             int high,
             Comparator<Employee> comparator
@@ -61,17 +63,11 @@ public class EvenExperienceSortStrategy implements SortStrategy<Employee> {
         for (int j = low; j < high; j++) {
             if (comparator.compare(list.get(j), pivot) <= 0) {
                 i++;
-                swap(list, i, j);
+                list.swap(i, j);
             }
         }
 
-        swap(list, i + 1, high);
+        list.swap(i + 1, high);
         return i + 1;
-    }
-
-    private void swap(List<Employee> list, int i, int j) {
-        Employee temp = list.get(i);
-        list.set(i, list.get(j));
-        list.set(j, temp);
     }
 }
