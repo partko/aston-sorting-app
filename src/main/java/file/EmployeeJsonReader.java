@@ -13,6 +13,7 @@ import java.util.stream.Stream;
  * Implementation of DataReader that parses Employee objects from a JSONL file.
  */
 public class EmployeeJsonReader implements DataReader<Employee> {
+    EmployeeJsonParser parser = new EmployeeJsonParser();
 
     @Override
     public CustomList<Employee> read(String userPath, Integer limit) {
@@ -27,7 +28,7 @@ public class EmployeeJsonReader implements DataReader<Employee> {
         try (Stream<String> lines = Files.lines(path)) {
             lines.map(String::trim)
                     .filter(line -> !line.isEmpty())
-                    .map(EmployeeJsonParser::toEmployee)
+                    .map(parser::fromJson)
                     .filter(Objects::nonNull)
                     .limit(maxElements)
                     .forEach(employees::add);

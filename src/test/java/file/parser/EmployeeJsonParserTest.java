@@ -1,6 +1,7 @@
 package file.parser;
 
 import model.Employee;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -15,6 +16,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Тестирование парсера EmployeeJsonParser (формат JSONL)")
 class EmployeeJsonParserTest {
+    EmployeeJsonParser parser;
+
+    @BeforeEach
+    void setUp() {
+        parser = new EmployeeJsonParser();
+    }
 
     @ParameterizedTest
     @ValueSource(strings = {
@@ -24,7 +31,7 @@ class EmployeeJsonParserTest {
     })
     @DisplayName("Десериализация: корректная обработка валидных JSON-объектов")
     void toEmployee_ShouldParseValidJson(String json) {
-        Employee employee = EmployeeJsonParser.toEmployee(json);
+        Employee employee = parser.fromJson(json);
         assertNotNull(employee);
         assertEquals("Ivan", employee.getName());
         assertEquals(5, employee.getExperienceYears());
@@ -36,7 +43,7 @@ class EmployeeJsonParserTest {
     })
     @DisplayName("Десериализация: возврат null при пустом или некорректном вводе")
     void toEmployee_ShouldReturnNullOnInvalidInput(String json) {
-        assertNull(EmployeeJsonParser.toEmployee(json));
+        assertNull(parser.fromJson(json));
     }
 
     static Stream<Arguments> provideFormatEdgeCases() {
@@ -59,7 +66,7 @@ class EmployeeJsonParserTest {
             "'{\"name\": \"N\", \"experienceYears\": 1, \"salary\": 100.000}', 1, 100.0" // Лишние нули в конце
     })
     void toEmployee_ShouldParseVariousNumericFormats(String json, int expectedExp, double expectedSal) {
-        Employee employee = EmployeeJsonParser.toEmployee(json);
+        Employee employee = parser.fromJson(json);
         assertNotNull(employee);
         assertEquals(expectedExp, employee.getExperienceYears());
         assertEquals(expectedSal, employee.getSalary(), 0.001);
@@ -69,7 +76,7 @@ class EmployeeJsonParserTest {
     @DisplayName("Десериализация: поддержка кириллицы и многобайтовых Unicode-символов (эмодзи)")
     void toEmployee_ShouldHandleUnicodeAndEmoji() {
         String json = "{\"name\": \"Иван 👨‍💻\", \"experienceYears\": 1, \"salary\": 5000.0}";
-        Employee emp = EmployeeJsonParser.toEmployee(json);
+        Employee emp = parser.fromJson(json);
 
         assertNotNull(emp);
         assertEquals("Иван 👨‍💻", emp.getName());
@@ -82,14 +89,14 @@ class EmployeeJsonParserTest {
             "{\"name\": \"WrongType\", \"experienceYears\": \"five\", \"salary\": 100}" // Строка вместо числа
     })
     void toEmployee_ShouldReturnNullForInvalidData(String json) {
-        assertNull(EmployeeJsonParser.toEmployee(json));
+        assertNull(parser.fromJson(json));
     }
 
     @Test
     @DisplayName("Сериализация: корректное экранирование кавычек и спецсимволов")
     void toJson_ShouldEscapeSpecialCharacters() {
         Employee employee = Employee.of("John \"Junior\" O'Neil", 1, 1000.0);
-        String json = EmployeeJsonParser.toJson(employee);
+        String json = parser.toJson(employee);
         assertTrue(json.contains("\"name\": \"John \\\"Junior\\\" O'Neil\""));
     }
 
@@ -97,7 +104,7 @@ class EmployeeJsonParserTest {
     @DisplayName("Сериализация: соблюдение формата для краевых значений (0, большие числа, спецсимволы)")
     @MethodSource("provideFormatEdgeCases")
     void toJson_ShouldMaintainCorrectFormat(Employee emp, String expectedExp, String expectedSal) {
-        String json = EmployeeJsonParser.toJson(emp);
+        String json = parser.toJson(emp);
         assertTrue(json.startsWith("{") && json.endsWith("}"));
         assertTrue(json.contains("\"experienceYears\": " + expectedExp));
         assertTrue(json.contains("\"salary\": " + expectedSal));
@@ -107,7 +114,7 @@ class EmployeeJsonParserTest {
     @DisplayName("Сериализация: использование точки как разделителя независимо от системной локали")
     void toJson_ShouldUseDotAsDecimalSeparator() {
         Employee employee = Employee.of("Ivan", 1, 1234.56);
-        String json = EmployeeJsonParser.toJson(employee);
+        String json = parser.toJson(employee);
 
         assertTrue(json.contains("1234.56"));
         assertFalse(json.contains("1234,56"));
@@ -118,8 +125,8 @@ class EmployeeJsonParserTest {
     void roundTrip_ShouldPreserveData() {
         Employee original = Employee.of("Test Employee\nNew Line", 10, 500.25);
 
-        String json = EmployeeJsonParser.toJson(original);
-        Employee parsed = EmployeeJsonParser.toEmployee(json);
+        String json = parser.toJson(original);
+        Employee parsed = parser.fromJson(json);
 
         assertEquals(original, parsed);
     }

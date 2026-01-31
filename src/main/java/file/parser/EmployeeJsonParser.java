@@ -5,9 +5,10 @@ import model.Employee;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class EmployeeJsonParser {
+public class EmployeeJsonParser implements DataParser<Employee>{
 
-    public static Employee toEmployee(String jsonLine) {
+    @Override
+    public Employee fromJson(String jsonLine) {
         if (jsonLine == null || jsonLine.isBlank()) return null;
         String name = extractStringField(jsonLine, "name");
         String expStr = extractNumberField(jsonLine, "experienceYears");
@@ -18,7 +19,8 @@ public class EmployeeJsonParser {
         return Employee.of(name, Integer.parseInt(expStr), Double.parseDouble(salStr));
     }
 
-    public static String toJson(Employee employee) {
+    @Override
+    public String toJson(Employee employee) {
         if (employee == null) return "null";
         return String.format(java.util.Locale.US,
                 "{\"name\": \"%s\", \"experienceYears\": %d, \"salary\": %.2f}",

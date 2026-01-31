@@ -13,6 +13,7 @@ import java.nio.file.StandardOpenOption;
  * using JSONL (JSON Lines) format. Each object is stored on a new line.
  */
 public class EmployeeJsonWriter implements DataWriter<Employee> {
+    EmployeeJsonParser parser = new EmployeeJsonParser();
 
     @Override
     public void write(String userPath, CustomList<Employee> data) {
@@ -41,7 +42,7 @@ public class EmployeeJsonWriter implements DataWriter<Employee> {
 
         for (Employee employee : data) {
             if (employee != null) {
-                String json = EmployeeJsonParser.toJson(employee);
+                String json = parser.toJson(employee);
                 sb.append(json).append("\n");
             }
         }
