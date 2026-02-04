@@ -19,7 +19,7 @@ public final class Employee {
 
     @Override
     public String toString() {
-        return "Employee{name='" + name + "', experienceYears=" + experienceYears + ", salary=" + salary + "}";
+        return String.format("%-12s | %4d | %12.2f", name, experienceYears, salary);
     }
 
     @Override
