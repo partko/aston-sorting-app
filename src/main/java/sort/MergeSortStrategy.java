@@ -1,9 +1,7 @@
 package sort;
 
 import collection.CustomList;
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 
 public class MergeSortStrategy<T> implements SortStrategy<T> {
 

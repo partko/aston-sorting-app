@@ -34,7 +34,6 @@ public class Menu {
     }
 
     public void handle(ConsoleIO io) {
-        //io.println("Choose option:");
         String choice = io.readLine().trim();
         MenuItem item = items.get(choice);
         if (item == null) {

@@ -25,16 +25,10 @@ public class QuickSortStrategy<T> implements SortStrategy<T> {
         for (int j = low; j < high; j++) {
             if (comp.compare(data.get(j), pivot) <= 0) {
                 i++;
-                swap(data, i, j);
+                data.swap(i, j);
             }
         }
-        swap(data, i + 1, high);
+        data.swap(i + 1, high);
         return i + 1;
-    }
-
-    private void swap(CustomList<T> data, int i, int j) {
-        T tmp = data.get(i);
-        data.set(i, data.get(j));
-        data.set(j, tmp);
     }
 }
