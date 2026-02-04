@@ -128,6 +128,22 @@ public class CustomList<T> implements Iterable<T> {
         }
     }
 
+    public CustomList<T> subList(int fromIndex, int toIndex) {
+        if (fromIndex < 0 || toIndex > size || fromIndex > toIndex) {
+            throw new IndexOutOfBoundsException(
+                    "fromIndex=" + fromIndex + ", toIndex=" + toIndex + ", size=" + size
+            );
+        }
+
+        CustomList<T> result = new CustomList<>(toIndex - fromIndex);
+
+        for (int i = fromIndex; i < toIndex; i++) {
+            result.add(get(i));
+        }
+
+        return result;
+    }
+
     public Iterator<T> iterator() {
 
         return new Iterator<T>() {

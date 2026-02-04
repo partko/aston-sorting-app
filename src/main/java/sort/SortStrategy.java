@@ -1,8 +1,6 @@
 package sort;
 
 import collection.CustomList;
-
-import java.util.ArrayList;
 import java.util.Comparator;
 
 public interface SortStrategy<T> {
