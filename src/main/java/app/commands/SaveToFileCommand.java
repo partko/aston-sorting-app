@@ -3,7 +3,6 @@ package app.commands;
 import app.AppContext;
 import app.ui.ConsoleIO;
 import file.EmployeeJsonWriter;
-import file.parser.EmployeeJsonParser;
 
 public class SaveToFileCommand implements Command {
     private final AppContext context;

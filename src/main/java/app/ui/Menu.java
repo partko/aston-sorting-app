@@ -27,7 +27,7 @@ public class Menu {
             header.print(io);
         }
 
-        io.println("\n===== " + title + " =====");
+        io.println("===== " + title + " =====");
         for (MenuItem item : items.values()) {
             io.println(item.key() + " - " + item.title());
         }

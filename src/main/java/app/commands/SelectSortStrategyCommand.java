@@ -1,7 +1,6 @@
 package app.commands;
 
 import app.AppContext;
-import app.ui.ConsoleIO;
 import sort.SortStrategy;
 
 public class SelectSortStrategyCommand implements Command {
@@ -17,7 +16,6 @@ public class SelectSortStrategyCommand implements Command {
 
     @Override
     public void execute() {
-        context.sortContext().setStrategy(strategy);
-        context.setStrategyName(sortStrategyName);
+        context.setStrategy(strategy, sortStrategyName);
     }
 }

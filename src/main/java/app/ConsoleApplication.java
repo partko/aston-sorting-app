@@ -4,6 +4,7 @@ import app.commands.*;
 import app.ui.ConsoleIO;
 import app.ui.Menu;
 import app.ui.MenuItem;
+import app.ui.header.MainMenuHeader;
 import app.ui.header.SortMenuHeader;
 import file.EmployeeJsonReader;
 import model.Employee;
@@ -26,13 +27,14 @@ public class ConsoleApplication {
         Menu sortMenu = createSortMenu(context, io, strategyMenu, comparatorMenu);
         sortMenu.setHeader(new SortMenuHeader(context));
 
-        Menu mainMenu = new Menu("Main menu:");
+        Menu mainMenu = new Menu("Main menu");
         mainMenu.add(new MenuItem("1", "Show collection", new ShowCollectionCommand(context, io)));
         mainMenu.add(new MenuItem("2", "Fill collection", new OpenSubMenuCommand(fillMenu, io, true)));
         mainMenu.add(new MenuItem("3", "Sort collection", new OpenSubMenuCommand(sortMenu, io, false)));
         mainMenu.add(new MenuItem("4", "Save to file", new SaveToFileCommand(context, io)));
         mainMenu.add(new MenuItem("5", "Count occurrences", new CountOccurrencesCommand(context, io)));
         mainMenu.add(new MenuItem("0", "Exit", new ExitCommand(this)));
+        mainMenu.setHeader(new MainMenuHeader(context));
 
         while (isRunning) {
             mainMenu.show(io);

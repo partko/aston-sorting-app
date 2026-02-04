@@ -1,8 +1,6 @@
 package app.commands;
 
 import app.AppContext;
-import app.ui.ConsoleIO;
-import app.ui.Menu;
 import model.Employee;
 
 import java.util.Comparator;

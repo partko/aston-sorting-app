@@ -18,6 +18,7 @@ public class ExecuteSortCommand implements Command {
             io.println("Nothing to sort!");
             return;
         }
-        context.sortContext().execute(context.getEmployees(), context.getComparator());
+        context.getSortContext().execute(context.getEmployees(), context.getComparator());
+        io.println("Collection sorted");
     }
 }
