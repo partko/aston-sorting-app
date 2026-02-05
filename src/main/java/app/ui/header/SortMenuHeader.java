@@ -2,6 +2,7 @@ package app.ui.header;
 
 import app.AppContext;
 import app.ui.ConsoleIO;
+import app.ui.UserIO;
 
 public class SortMenuHeader implements MenuHeader {
     private final AppContext context;
@@ -11,7 +12,7 @@ public class SortMenuHeader implements MenuHeader {
     }
 
     @Override
-    public void print(ConsoleIO io) {
+    public void print(UserIO io) {
         io.println("--------------------------------");
         io.println("    Current sorting settings");
         io.println("    Strategy: " + context.getStrategyName());

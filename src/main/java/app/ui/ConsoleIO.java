@@ -2,12 +2,8 @@ package app.ui;
 
 import java.util.Scanner;
 
-public class ConsoleIO {
+public class ConsoleIO implements UserIO {
     private final Scanner scanner = new Scanner(System.in);
-
-    public void print(String text) {
-        System.out.print(text);
-    }
 
     public void println(String text) {
         System.out.println(text);
@@ -19,16 +15,33 @@ public class ConsoleIO {
 
     public int readInt(String message) {
         while (true) {
-            System.out.println(message);
+            println(message);
             try {
                 return Integer.parseInt(readLine().trim());
             } catch (NumberFormatException e) {
-                System.out.println("Enter a valid integer!");
+                println("Enter a valid integer!");
             }
         }
     }
 
-    public Scanner getScanner() {
-        return scanner;
+    public double readDouble(String message) {
+        while (true) {
+            println(message);
+            String s = readLine().trim().replace(',', '.');
+            try {
+                return Double.parseDouble(s);
+            } catch (NumberFormatException e) {
+                println("Enter a valid number!");
+            }
+        }
+    }
+
+    public String readNonBlank(String message) {
+        while (true) {
+            println(message);
+            String s = readLine().trim();
+            if (!s.isBlank()) return s;
+            println("Value must not be empty!");
+        }
     }
 }

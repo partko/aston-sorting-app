@@ -1,10 +1,9 @@
 package input;
 
+import app.ui.ConsoleIO;
 import model.Employee;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -14,57 +13,49 @@ class EmployeeManualInputTest {
     @Test
     @DisplayName("Успешное чтение сотрудника с корректными данными")
     void readEmployee_Success() {
-        Scanner scanner = mock(Scanner.class);
-        when(scanner.nextLine())
-                .thenReturn("Ivan")
-                .thenReturn("5")
-                .thenReturn("1500.50");
+        ConsoleIO io = mock(ConsoleIO.class);
+        when (io.readNonBlank(anyString())).thenReturn("Ivan");
+        when (io.readInt(anyString())).thenReturn(5);
+        when (io.readDouble(anyString())).thenReturn(1500.50);
 
-        EmployeeManualInput input = new EmployeeManualInput(scanner);
-        Employee employee = input.readEmployee();
+        EmployeeManualInput input = new EmployeeManualInput();
+        Employee employee = input.readEmployee(io);
 
         assertNotNull(employee);
         assertEquals("Ivan", employee.getName());
         assertEquals(5, employee.getExperienceYears());
         assertEquals(1500.50, employee.getSalary());
-    }
 
-    @Test
-    @DisplayName("Запуск повторного чтения с начала при вводе некорректного значения")
-    void readEmployee_RetriesOnInvalidNumber() {
-        Scanner scanner = mock(Scanner.class);
-        when(scanner.nextLine())
-                .thenReturn("Ivan")
-                .thenReturn("not_a_number")
-                .thenReturn("Ivan")
-                .thenReturn("5")
-                .thenReturn("wrong_salary")
-                .thenReturn("Ivan")
-                .thenReturn("5")
-                .thenReturn("2000.0");
+        verify(io, times(1)).readNonBlank(anyString());
+        verify(io, times(1)).readInt(anyString());
+        verify(io, times(1)).readDouble(anyString());
 
-        EmployeeManualInput input = new EmployeeManualInput(scanner);
-        Employee employee = input.readEmployee();
-
-        assertEquals(2000.0, employee.getSalary());
-        verify(scanner, atLeast(6)).nextLine();
+        // ошибок быть не должно
+        verify(io, never()).println(startsWith("Input error:"));
     }
 
     @Test
     @DisplayName("Обработка IllegalArgumentException при вводе некорректных данных")
     void readEmployee_HandlesIllegalArgumentException() {
-        Scanner scanner = mock(Scanner.class);
-        when(scanner.nextLine())
-                .thenReturn("Ivan")
-                .thenReturn("-1")
-                .thenReturn("1000")
-                .thenReturn("Ivan")
-                .thenReturn("3")
-                .thenReturn("1000");
+        ConsoleIO io = mock(ConsoleIO.class);
 
-        EmployeeManualInput input = new EmployeeManualInput(scanner);
-        Employee employee = input.readEmployee();
+        // 1-я попытка: exp = -1 (должно упасть в Employee Builder)
+        // 2-я попытка: всё корректно
+        when(io.readNonBlank(anyString())).thenReturn("Ivan", "Ivan");
+        when(io.readInt(anyString())).thenReturn(-1, 3);
+        when(io.readDouble(anyString())).thenReturn(1000.0, 1000.0);
+
+        EmployeeManualInput input = new EmployeeManualInput();
+        Employee employee = input.readEmployee(io);
 
         assertEquals(3, employee.getExperienceYears());
+
+        // Ввод был запрошен 2 раза по кругу
+        verify(io, times(2)).readNonBlank(anyString());
+        verify(io, times(2)).readInt(anyString());
+        verify(io, times(2)).readDouble(anyString());
+
+        // Сообщение об ошибке должно быть напечатано хотя бы раз
+        verify(io, atLeastOnce()).println(startsWith("Input error:"));
     }
 }

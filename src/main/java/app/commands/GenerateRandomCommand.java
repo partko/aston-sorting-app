@@ -1,7 +1,7 @@
 package app.commands;
 
 import app.AppContext;
-import app.ui.ConsoleIO;
+import app.ui.UserIO;
 import collection.CustomList;
 import input.EmployeeGenerator;
 import model.Employee;
@@ -10,9 +10,9 @@ public class GenerateRandomCommand implements Command {
     private static final int DEFAULT_COUNT = 50;
 
     private final AppContext context;
-    private final ConsoleIO io;
+    private final UserIO io;
 
-    public GenerateRandomCommand(AppContext context, ConsoleIO io) {
+    public GenerateRandomCommand(AppContext context, UserIO io) {
         this.context = context;
         this.io = io;
     }

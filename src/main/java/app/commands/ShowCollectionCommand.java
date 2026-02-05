@@ -1,14 +1,14 @@
 package app.commands;
 
 import app.AppContext;
-import app.ui.ConsoleIO;
+import app.ui.UserIO;
 import model.Employee;
 
 public class ShowCollectionCommand implements Command {
     private final AppContext context;
-    private final ConsoleIO io;
+    private final UserIO io;
 
-    public ShowCollectionCommand(AppContext context, ConsoleIO io) {
+    public ShowCollectionCommand(AppContext context, UserIO io) {
         this.context = context;
         this.io = io;
     }

@@ -1,13 +1,13 @@
 package app.commands;
 
 import app.AppContext;
-import app.ui.ConsoleIO;
+import app.ui.UserIO;
 
 public class ExecuteSortCommand implements Command {
     private final AppContext context;
-    private final ConsoleIO io;
+    private final UserIO io;
 
-    public ExecuteSortCommand(AppContext context, ConsoleIO io) {
+    public ExecuteSortCommand(AppContext context, UserIO io) {
         this.context = context;
         this.io = io;
     }

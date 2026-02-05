@@ -1,28 +1,28 @@
 package app.commands;
 
 import app.AppContext;
-import app.ui.ConsoleIO;
+import app.ui.UserIO;
 import collection.CustomList;
 import input.EmployeeManualInput;
 import model.Employee;
 
 public class ManualInputCommand implements Command {
     private final AppContext context;
-    private final ConsoleIO io;
+    private final UserIO io;
+    private final EmployeeManualInput input;
 
-    public ManualInputCommand(AppContext context, ConsoleIO io) {
+    public ManualInputCommand(AppContext context, UserIO io, EmployeeManualInput input) {
         this.context = context;
         this.io = io;
+        this.input = input;
     }
 
     @Override
     public void execute() {
-        EmployeeManualInput input = new EmployeeManualInput(io.getScanner());
         int count = io.readInt("Enter employees count: ");
         CustomList<Employee> inputList = new CustomList<>();
         for (int i = 0; i < count; i++) {
-            Employee employee = input.readEmployee();
-            inputList.add(employee);
+            inputList.add(input.readEmployee(io));
         }
         context.setEmployees(inputList);
         io.println("Read employees: " + inputList.size());

@@ -1,17 +1,17 @@
 package app.commands;
 
 import app.AppContext;
-import app.ui.ConsoleIO;
+import app.ui.UserIO;
 import collection.CustomList;
 import file.EmployeeJsonReader;
 import model.Employee;
 
 public class LoadFromJSONCommand implements Command {
     private final AppContext context;
-    private final ConsoleIO io;
+    private final UserIO io;
     private final EmployeeJsonReader reader;
 
-    public LoadFromJSONCommand(AppContext context, ConsoleIO io, EmployeeJsonReader reader) {
+    public LoadFromJSONCommand(AppContext context, UserIO io, EmployeeJsonReader reader) {
         this.context = context;
         this.io = io;
         this.reader = reader;

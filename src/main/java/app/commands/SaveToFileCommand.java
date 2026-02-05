@@ -1,14 +1,14 @@
 package app.commands;
 
 import app.AppContext;
-import app.ui.ConsoleIO;
+import app.ui.UserIO;
 import file.EmployeeJsonWriter;
 
 public class SaveToFileCommand implements Command {
     private final AppContext context;
-    private final ConsoleIO io;
+    private final UserIO io;
 
-    public SaveToFileCommand(AppContext context, ConsoleIO io) {
+    public SaveToFileCommand(AppContext context, UserIO io) {
         this.context = context;
         this.io = io;
     }
