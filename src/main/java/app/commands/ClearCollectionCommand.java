@@ -1,21 +1,20 @@
 package app.commands;
 
-import app.AppContext;
+import app.context.AppContext;
 import app.ui.UserIO;
-import collection.CustomList;
 
 public class ClearCollectionCommand implements Command {
-    private final AppContext context;
+    private final AppContext ctx;
     private final UserIO io;
 
-    public ClearCollectionCommand(AppContext context, UserIO io) {
-        this.context = context;
+    public ClearCollectionCommand(AppContext ctx, UserIO io) {
+        this.ctx = ctx;
         this.io = io;
     }
 
     @Override
     public void execute() {
-        context.setEmployees(new CustomList<>());
+        ctx.collection().clear();
         io.println("Collection cleared");
     }
 }

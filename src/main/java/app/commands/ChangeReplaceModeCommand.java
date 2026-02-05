@@ -1,16 +1,16 @@
 package app.commands;
 
-import app.AppContext;
+import app.context.AppContext;
 
 public class ChangeReplaceModeCommand implements Command {
-    private final AppContext context;
+    private final AppContext ctx;
 
-    public ChangeReplaceModeCommand(AppContext context) {
-        this.context = context;
+    public ChangeReplaceModeCommand(AppContext ctx) {
+        this.ctx = ctx;
     }
 
     @Override
     public void execute() {
-        context.setReplaceMode(!context.isReplaceMode());
+        ctx.io().changeReplaceMode();
     }
 }

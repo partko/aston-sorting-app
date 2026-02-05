@@ -1,23 +1,19 @@
 package app.commands;
 
-import app.AppContext;
-import model.Employee;
-
-import java.util.Comparator;
+import app.context.AppContext;
+import app.options.EmployeeComparator;
 
 public class SelectComparatorCommand implements Command {
-    private final AppContext context;
-    private final Comparator<Employee> comparator;
-    private final String comparatorName;
+    private final AppContext ctx;
+    private final EmployeeComparator comparator;
 
-    public SelectComparatorCommand(AppContext context, Comparator<Employee> comparator, String comparatorName) {
-        this.context = context;
+    public SelectComparatorCommand(AppContext ctx, EmployeeComparator comparator) {
+        this.ctx = ctx;
         this.comparator = comparator;
-        this.comparatorName = comparatorName;
     }
 
     @Override
     public void execute() {
-        context.setComparator(comparator, comparatorName);
+        ctx.io().setComparator(comparator);
     }
 }

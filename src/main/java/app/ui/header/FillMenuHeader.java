@@ -1,7 +1,6 @@
 package app.ui.header;
 
-import app.AppContext;
-import app.ui.ConsoleIO;
+import app.context.AppContext;
 import app.ui.UserIO;
 
 public class FillMenuHeader implements MenuHeader {
@@ -14,8 +13,8 @@ public class FillMenuHeader implements MenuHeader {
     @Override
     public void print(UserIO io) {
         io.println("--------------------------------");
-        io.println("   Current collection size: " + context.getEmployees().size());
-        io.println("        Replace mode: " + (context.isReplaceMode() ? "ON" : "OFF"));
+        io.println("   Current collection size: " + context.collection().get().size());
+        io.println("        Replace mode: " + (context.io().isReplaceMode() ? "ON" : "OFF"));
         io.println("--------------------------------");
     }
 }

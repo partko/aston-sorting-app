@@ -1,7 +1,6 @@
 package app.ui.header;
 
-import app.AppContext;
-import app.ui.ConsoleIO;
+import app.context.AppContext;
 import app.ui.UserIO;
 
 public class SortMenuHeader implements MenuHeader {
@@ -15,8 +14,15 @@ public class SortMenuHeader implements MenuHeader {
     public void print(UserIO io) {
         io.println("--------------------------------");
         io.println("    Current sorting settings");
-        io.println("    Strategy: " + context.getStrategyName());
-        io.println("    Comparator: " + context.getComparatorName());
+        io.println("    Strategy: " + usefulName(context.sorting().getStrategy().getClass()));
+        io.println("    Comparator: " + context.io().getComparatorName());
         io.println("--------------------------------");
+    }
+
+    private String usefulName(Class<?> c) {
+        String name = c.getSimpleName();
+        name = name.replace("SortStrategy", "");
+        name = name.replaceAll("([a-z])([A-Z])", "$1 $2");
+        return name.trim();
     }
 }

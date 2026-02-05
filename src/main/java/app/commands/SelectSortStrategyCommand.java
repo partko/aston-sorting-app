@@ -1,21 +1,40 @@
 package app.commands;
 
-import app.AppContext;
+import app.context.AppContext;
+import app.options.EmployeeComparator;
+import model.Employee;
 import sort.SortStrategy;
 
-public class SelectSortStrategyCommand implements Command {
-    private final AppContext context;
-    private final SortStrategy strategy;
-    private final String sortStrategyName;
+import java.util.Comparator;
 
-    public SelectSortStrategyCommand(AppContext context, SortStrategy strategy, String sortStrategyName) {
-        this.context = context;
+public class SelectSortStrategyCommand implements Command {
+    private final AppContext ctx;
+    private final SortStrategy<Employee> strategy;
+    private final boolean isEvenExperienceMode;
+
+    public SelectSortStrategyCommand(AppContext ctx, SortStrategy<Employee> strategy, boolean isEvenExperienceMode) {
+        this.ctx = ctx;
         this.strategy = strategy;
-        this.sortStrategyName = sortStrategyName;
+        this.isEvenExperienceMode = isEvenExperienceMode;
+    }
+
+    public SelectSortStrategyCommand(AppContext ctx, SortStrategy<Employee> strategy) {
+        this.ctx = ctx;
+        this.strategy = strategy;
+        this.isEvenExperienceMode = false;
     }
 
     @Override
     public void execute() {
-        context.setStrategy(strategy, sortStrategyName);
+        ctx.sorting().setStrategy(strategy);
+        ctx.setEvenExperienceMode(isEvenExperienceMode);
+
+        if (ctx.isEvenExperienceMode()) {
+            Comparator<Employee> c = ctx.io().getComparator();
+            if (c != EmployeeComparator.BY_EXPERIENCE_ASC.comparator() &&
+                    c != EmployeeComparator.BY_EXPERIENCE_DESC.comparator()) {
+                ctx.io().setComparator(EmployeeComparator.BY_EXPERIENCE_ASC);
+            }
+        }
     }
 }

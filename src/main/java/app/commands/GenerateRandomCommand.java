@@ -1,6 +1,6 @@
 package app.commands;
 
-import app.AppContext;
+import app.context.AppContext;
 import app.ui.UserIO;
 import collection.CustomList;
 import input.EmployeeGenerator;
@@ -9,11 +9,11 @@ import model.Employee;
 public class GenerateRandomCommand implements Command {
     private static final int DEFAULT_COUNT = 50;
 
-    private final AppContext context;
+    private final AppContext ctx;
     private final UserIO io;
 
-    public GenerateRandomCommand(AppContext context, UserIO io) {
-        this.context = context;
+    public GenerateRandomCommand(AppContext ctx, UserIO io) {
+        this.ctx = ctx;
         this.io = io;
     }
 
@@ -23,7 +23,10 @@ public class GenerateRandomCommand implements Command {
         int count = (max <= 0) ? DEFAULT_COUNT : max;
 
         CustomList<Employee> generatedList = EmployeeGenerator.generateEmployees(count);
-        context.setEmployees(generatedList);
+        if (ctx.io().isReplaceMode()) {
+            ctx.collection().clear();
+        }
+        ctx.collection().addAll(generatedList);
         io.println("Generated employees: " + generatedList.size());
     }
 }

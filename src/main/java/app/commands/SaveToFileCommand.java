@@ -1,16 +1,18 @@
 package app.commands;
 
-import app.AppContext;
+import app.context.AppContext;
 import app.ui.UserIO;
 import file.EmployeeJsonWriter;
 
 public class SaveToFileCommand implements Command {
-    private final AppContext context;
+    private final AppContext ctx;
     private final UserIO io;
+    private final EmployeeJsonWriter writer;
 
-    public SaveToFileCommand(AppContext context, UserIO io) {
-        this.context = context;
+    public SaveToFileCommand(AppContext context, UserIO io, EmployeeJsonWriter writer) {
+        this.ctx = context;
         this.io = io;
+        this.writer = writer;
     }
 
     @Override
@@ -18,7 +20,7 @@ public class SaveToFileCommand implements Command {
         io.println("Enter output full file path: ");
         String path = io.readLine().trim();
         try {
-            new EmployeeJsonWriter().write(path, context.getEmployees());
+            writer.write(path, ctx.collection().get());
             io.println("Collection saved");
         } catch (Exception e) {
             io.println("Error: " + e.getMessage());

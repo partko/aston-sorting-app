@@ -1,6 +1,8 @@
-package sort;
+package app.context;
 
 import collection.CustomList;
+import sort.SortStrategy;
+
 import java.util.Comparator;
 
 public class SortContext<T> {
@@ -9,6 +11,10 @@ public class SortContext<T> {
 
     public void setStrategy(SortStrategy<T> strategy) {
         this.strategy = strategy;
+    }
+
+    public SortStrategy<T> getStrategy() {
+        return strategy;
     }
 
     public void execute(CustomList<T> data, Comparator<T> comparator) {

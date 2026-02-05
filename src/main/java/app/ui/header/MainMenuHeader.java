@@ -1,7 +1,6 @@
 package app.ui.header;
 
-import app.AppContext;
-import app.ui.ConsoleIO;
+import app.context.AppContext;
 import app.ui.UserIO;
 
 public class MainMenuHeader implements MenuHeader {
@@ -14,7 +13,7 @@ public class MainMenuHeader implements MenuHeader {
     @Override
     public void print(UserIO io) {
         io.println("--------------------------------");
-        io.println("   Current collection size: " + context.getEmployees().size());
+        io.println("   Current collection size: " + context.collection().get().size());
         io.println("--------------------------------");
     }
 }

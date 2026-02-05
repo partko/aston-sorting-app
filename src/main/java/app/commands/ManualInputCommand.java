@@ -1,18 +1,18 @@
 package app.commands;
 
-import app.AppContext;
+import app.context.AppContext;
 import app.ui.UserIO;
 import collection.CustomList;
 import input.EmployeeManualInput;
 import model.Employee;
 
 public class ManualInputCommand implements Command {
-    private final AppContext context;
+    private final AppContext ctx;
     private final UserIO io;
     private final EmployeeManualInput input;
 
-    public ManualInputCommand(AppContext context, UserIO io, EmployeeManualInput input) {
-        this.context = context;
+    public ManualInputCommand(AppContext ctx, UserIO io, EmployeeManualInput input) {
+        this.ctx = ctx;
         this.io = io;
         this.input = input;
     }
@@ -24,7 +24,10 @@ public class ManualInputCommand implements Command {
         for (int i = 0; i < count; i++) {
             inputList.add(input.readEmployee(io));
         }
-        context.setEmployees(inputList);
+        if (ctx.io().isReplaceMode()) {
+            ctx.collection().clear();
+        }
+        ctx.collection().addAll(inputList);
         io.println("Read employees: " + inputList.size());
     }
 }

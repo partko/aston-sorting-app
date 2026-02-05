@@ -1,24 +1,24 @@
 package app.commands;
 
-import app.AppContext;
+import app.context.AppContext;
 import app.ui.UserIO;
 
 public class ExecuteSortCommand implements Command {
-    private final AppContext context;
+    private final AppContext ctx;
     private final UserIO io;
 
-    public ExecuteSortCommand(AppContext context, UserIO io) {
-        this.context = context;
+    public ExecuteSortCommand(AppContext ctx, UserIO io) {
+        this.ctx = ctx;
         this.io = io;
     }
 
     @Override
     public void execute() {
-        if (context.getEmployees() == null || context.getEmployees().size() < 2) {
+        if (!ctx.collection().isReadyToSort()) {
             io.println("Nothing to sort!");
             return;
         }
-        context.getSortContext().execute(context.getEmployees(), context.getComparator());
+        ctx.sorting().execute(ctx.collection().get(), ctx.io().getComparator());
         io.println("Collection sorted");
     }
 }

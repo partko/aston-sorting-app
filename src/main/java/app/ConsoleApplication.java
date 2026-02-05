@@ -1,6 +1,8 @@
 package app;
 
 import app.commands.*;
+import app.context.AppContext;
+import app.options.EmployeeComparator;
 import app.ui.ConsoleIO;
 import app.ui.Menu;
 import app.ui.MenuItem;
@@ -9,8 +11,8 @@ import app.ui.header.FillMenuHeader;
 import app.ui.header.MainMenuHeader;
 import app.ui.header.SortMenuHeader;
 import file.EmployeeJsonReader;
+import file.EmployeeJsonWriter;
 import input.EmployeeManualInput;
-import model.Employee;
 import sort.BubbleSortStrategy;
 import sort.EvenExperienceSortStrategy;
 import sort.MergeSortStrategy;
@@ -19,79 +21,84 @@ import sort.QuickSortStrategy;
 public class ConsoleApplication {
 
     public void run() {
-        AppContext context = new AppContext();
+        AppContext ctx = new AppContext();
         UserIO io = new ConsoleIO();
 
         EmployeeJsonReader reader = new EmployeeJsonReader();
-        EmployeeManualInput employeeInput = new EmployeeManualInput();
+        EmployeeJsonWriter writer = new EmployeeJsonWriter();
+        EmployeeManualInput input = new EmployeeManualInput();
 
-        Menu mainMenu = createMainMenu(context, io, reader, employeeInput);
+        Menu mainMenu = createMainMenu(ctx, io, reader, writer, input);
 
         mainMenu.run();
     }
 
-    private Menu createMainMenu(AppContext context, UserIO io, EmployeeJsonReader reader, EmployeeManualInput employeeInput) {
-        Menu fillMenu = createFillMenu(context, io, reader, employeeInput);
-        fillMenu.setHeader(new FillMenuHeader(context));
+    private Menu createMainMenu(AppContext ctx, UserIO io, EmployeeJsonReader reader, EmployeeJsonWriter writer, EmployeeManualInput input) {
+        Menu fillMenu = createFillMenu(ctx, io, reader, input);
+        fillMenu.setHeader(new FillMenuHeader(ctx));
 
-        Menu strategyMenu = createStrategyMenu(context, io);
-        Menu comparatorMenu = createComparatorMenu(context, io);
+        Menu strategyMenu = createStrategyMenu(ctx, io);
+        Menu comparatorMenu = createComparatorMenu(ctx, io);
 
-        Menu sortMenu = createSortMenu(context, io, strategyMenu, comparatorMenu);
-        sortMenu.setHeader(new SortMenuHeader(context));
+        Menu sortMenu = createSortMenu(ctx, io, strategyMenu, comparatorMenu);
+        sortMenu.setHeader(new SortMenuHeader(ctx));
 
         Menu menu = new Menu("Main menu", io, false);
-        menu.add(new MenuItem("1", "Show collection", new ShowCollectionCommand(context, io)));
+        menu.add(new MenuItem("1", "Show collection", new ShowCollectionCommand(ctx, io)));
         menu.add(new MenuItem("2", "Fill collection", new OpenSubMenuCommand(fillMenu)));
         menu.add(new MenuItem("3", "Sort collection", new OpenSubMenuCommand(sortMenu)));
-        menu.add(new MenuItem("4", "Save to file", new SaveToFileCommand(context, io)));
-        menu.add(new MenuItem("5", "Count occurrences", new CountOccurrencesCommand(context, io, employeeInput)));
+        menu.add(new MenuItem("4", "Save to file", new SaveToFileCommand(ctx, io, writer)));
+        menu.add(new MenuItem("5", "Count occurrences", new CountOccurrencesCommand(ctx, io, input)));
         menu.add(new MenuItem("0", "Exit", new EmptyCommand()));
-        menu.setHeader(new MainMenuHeader(context));
+        menu.setHeader(new MainMenuHeader(ctx));
         return menu;
     }
 
-    private Menu createFillMenu(AppContext context, UserIO io, EmployeeJsonReader reader, EmployeeManualInput employeeInput) {
+    private Menu createFillMenu(AppContext ctx, UserIO io, EmployeeJsonReader reader, EmployeeManualInput input) {
         Menu menu = new Menu("Fill collection", io, false);
-        menu.add(new MenuItem("1", "Show collection", new ShowCollectionCommand(context, io)));
-        menu.add(new MenuItem("2", "Load from JSONL file", new LoadFromJSONCommand(context, io, reader)));
-        menu.add(new MenuItem("3", "Generate random", new GenerateRandomCommand(context, io)));
-        menu.add(new MenuItem("4", "Manual input", new ManualInputCommand(context, io, employeeInput)));
-        menu.add(new MenuItem("5", "Clear collection", new ClearCollectionCommand(context, io)));
-        menu.add(new MenuItem("6", "Change replace mode", new ChangeReplaceModeCommand(context)));
+        menu.add(new MenuItem("1", "Show collection", new ShowCollectionCommand(ctx, io)));
+        menu.add(new MenuItem("2", "Load from JSONL file", new LoadFromJSONCommand(ctx, io, reader)));
+        menu.add(new MenuItem("3", "Generate random", new GenerateRandomCommand(ctx, io)));
+        menu.add(new MenuItem("4", "Manual input", new ManualInputCommand(ctx, io, input)));
+        menu.add(new MenuItem("5", "Clear collection", new ClearCollectionCommand(ctx, io)));
+        menu.add(new MenuItem("6", "Change replace mode", new ChangeReplaceModeCommand(ctx)));
         menu.add(new MenuItem("0", "Back", new EmptyCommand()));
         return menu;
     }
 
-    private Menu createSortMenu(AppContext context, UserIO io, Menu strategy, Menu comparator) {
+    private Menu createSortMenu(AppContext ctx, UserIO io, Menu strategy, Menu comparator) {
+        Command specialMenu = new OpenSubMenuCommand(comparator, new ToggleExperienceComparatorCommand(ctx, io), ctx::isEvenExperienceMode);
         Menu menu = new Menu("Sorting options", io, false);
-        menu.add(new MenuItem("1", "Show collection", new ShowCollectionCommand(context, io)));
+        menu.add(new MenuItem("1", "Show collection", new ShowCollectionCommand(ctx, io)));
         menu.add(new MenuItem("2", "Select sort strategy", new OpenSubMenuCommand(strategy)));
-        menu.add(new MenuItem("3", "Select comparator", new OpenSubMenuCommand(comparator)));
-        menu.add(new MenuItem("4", "Execute sort", new ExecuteSortCommand(context, io)));
+        menu.add(new MenuItem("3", "Select comparator", specialMenu));
+        menu.add(new MenuItem("4", "Execute sort", new ExecuteSortCommand(ctx, io)));
         menu.add(new MenuItem("0", "Back", new EmptyCommand()));
         return menu;
     }
 
-    private Menu createStrategyMenu(AppContext context, UserIO io) {
+    private Menu createStrategyMenu(AppContext ctx, UserIO io) {
         Menu menu = new Menu("Sort strategies", io, true);
-        menu.add(new MenuItem("1", "Bubble Sort", new SelectSortStrategyCommand(context, new BubbleSortStrategy<>(), "Bubble Sort")));
-        menu.add(new MenuItem("2", "Quick Sort", new SelectSortStrategyCommand(context, new QuickSortStrategy<>(), "Quick Sort")));
-        menu.add(new MenuItem("3", "Merge Sort", new SelectSortStrategyCommand(context, new MergeSortStrategy<>(), "Merge Sort")));
-        menu.add(new MenuItem("4", "Even Experience Sort", new SelectSortStrategyCommand(context, new EvenExperienceSortStrategy(), "Even Experience Sort")));
+        Command bubbleSort = new SelectSortStrategyCommand(ctx, new BubbleSortStrategy<>());
+        menu.add(new MenuItem("1", "Bubble Sort", bubbleSort));
+        Command quickSort = new SelectSortStrategyCommand(ctx, new QuickSortStrategy<>());
+        menu.add(new MenuItem("2", "Quick Sort", quickSort));
+        Command mergeSort = new SelectSortStrategyCommand(ctx, new MergeSortStrategy<>());
+        menu.add(new MenuItem("3", "Merge Sort", mergeSort));
+        Command evenExperienceSort = new SelectSortStrategyCommand(ctx, new EvenExperienceSortStrategy(), true);
+        menu.add(new MenuItem("4", "Even Experience Sort",evenExperienceSort));
         menu.add(new MenuItem("0", "Back", new EmptyCommand()));
         return menu;
     }
 
-    private Menu createComparatorMenu(AppContext context, UserIO io) {
+    private Menu createComparatorMenu(AppContext ctx, UserIO io) {
         Menu menu = new Menu("Comparators", io, true);
-        menu.add(new MenuItem("1", "General", new SelectComparatorCommand(context, Employee.GENERAL, "General")));
-        menu.add(new MenuItem("2", "Name ASC", new SelectComparatorCommand(context, Employee.BY_NAME_ASC, "Name ASC")));
-        menu.add(new MenuItem("3", "Name DESC", new SelectComparatorCommand(context, Employee.BY_NAME_DESC, "Name DESC")));
-        menu.add(new MenuItem("4", "Salary ASC", new SelectComparatorCommand(context, Employee.BY_SALARY_ASC, "Salary ASC")));
-        menu.add(new MenuItem("5", "Salary DESC", new SelectComparatorCommand(context, Employee.BY_SALARY_DESC, "Salary DESC")));
-        menu.add(new MenuItem("6", "Experience ASC", new SelectComparatorCommand(context, Employee.BY_EXPERIENCE_ASC, "Experience ASC")));
-        menu.add(new MenuItem("7", "Experience DESC", new SelectComparatorCommand(context, Employee.BY_EXPERIENCE_DESC, "Experience DESC")));
+        int i = 1;
+        for (EmployeeComparator comp : EmployeeComparator.values()) {
+            menu.add(new MenuItem(String.valueOf(i), comp.label(),
+                    new SelectComparatorCommand(ctx, comp)));
+            i++;
+        }
         menu.add(new MenuItem("0", "Back", new EmptyCommand()));
         return menu;
     }
