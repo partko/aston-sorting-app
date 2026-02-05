@@ -19,6 +19,7 @@ public class AppContext {
 
     private String strategyName = DEFAULT_STRATEGY_NAME;
     private String comparatorName = DEFAULT_COMPARATOR_NAME;
+    private boolean replaceMode = true;
 
     public AppContext() {
         setStrategy(new QuickSortStrategy<>(), DEFAULT_STRATEGY_NAME);
@@ -30,7 +31,12 @@ public class AppContext {
     }
 
     public void setEmployees(CustomList<Employee> employees) {
-        this.employees = (employees == null) ? new CustomList<>() : employees;
+        if (replaceMode) {
+            this.employees = (employees == null) ? new CustomList<>() : employees;
+        } else {
+            if (employees == null || employees.size() == 0) return;
+            this.employees.addAll(employees);
+        }
     }
 
     public Comparator<Employee> getComparator() {
@@ -59,5 +65,13 @@ public class AppContext {
         if (strategy == null) throw new IllegalArgumentException("Strategy must not be null");
         sortContext.setStrategy(strategy);
         this.strategyName = (name == null || name.isBlank()) ? "Custom" : name;
+    }
+
+    public boolean isReplaceMode() {
+        return replaceMode;
+    }
+
+    public void setReplaceMode(boolean replaceMode) {
+        this.replaceMode = replaceMode;
     }
 }

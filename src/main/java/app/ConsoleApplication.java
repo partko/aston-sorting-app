@@ -4,6 +4,7 @@ import app.commands.*;
 import app.ui.ConsoleIO;
 import app.ui.Menu;
 import app.ui.MenuItem;
+import app.ui.header.FillMenuHeader;
 import app.ui.header.MainMenuHeader;
 import app.ui.header.SortMenuHeader;
 import file.EmployeeJsonReader;
@@ -22,6 +23,7 @@ public class ConsoleApplication {
         EmployeeJsonReader reader = new EmployeeJsonReader();
 
         Menu fillMenu = createFillMenu(context, io, reader);
+        fillMenu.setHeader(new FillMenuHeader(context));
         Menu strategyMenu = createStrategyMenu(context, io);
         Menu comparatorMenu = createComparatorMenu(context, io);
         Menu sortMenu = createSortMenu(context, io, strategyMenu, comparatorMenu);
@@ -29,7 +31,7 @@ public class ConsoleApplication {
 
         Menu mainMenu = new Menu("Main menu");
         mainMenu.add(new MenuItem("1", "Show collection", new ShowCollectionCommand(context, io)));
-        mainMenu.add(new MenuItem("2", "Fill collection", new OpenSubMenuCommand(fillMenu, io, true)));
+        mainMenu.add(new MenuItem("2", "Fill collection", new OpenSubMenuCommand(fillMenu, io, false)));
         mainMenu.add(new MenuItem("3", "Sort collection", new OpenSubMenuCommand(sortMenu, io, false)));
         mainMenu.add(new MenuItem("4", "Save to file", new SaveToFileCommand(context, io)));
         mainMenu.add(new MenuItem("5", "Count occurrences", new CountOccurrencesCommand(context, io)));
@@ -44,10 +46,12 @@ public class ConsoleApplication {
 
     private Menu createFillMenu(AppContext context, ConsoleIO io, EmployeeJsonReader reader) {
         Menu menu = new Menu("Fill collection");
-        menu.add(new MenuItem("1", "Load from JSONL file", new LoadFromJSONCommand(context, io, reader)));
-        menu.add(new MenuItem("2", "Generate random", new GenerateRandomCommand(context, io)));
-        menu.add(new MenuItem("3", "Manual input", new ManualInputCommand(context, io)));
-        menu.add(new MenuItem("4", "Clear collection", new ClearCollectionCommand(context, io)));
+        menu.add(new MenuItem("1", "Show collection", new ShowCollectionCommand(context, io)));
+        menu.add(new MenuItem("2", "Load from JSONL file", new LoadFromJSONCommand(context, io, reader)));
+        menu.add(new MenuItem("3", "Generate random", new GenerateRandomCommand(context, io)));
+        menu.add(new MenuItem("4", "Manual input", new ManualInputCommand(context, io)));
+        menu.add(new MenuItem("5", "Clear collection", new ClearCollectionCommand(context, io)));
+        menu.add(new MenuItem("6", "Change replace mode", new ChangeReplaceModeCommand(context)));
         menu.add(new MenuItem("0", "Back", new BackCommand()));
         return menu;
     }
